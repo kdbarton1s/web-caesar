@@ -17,13 +17,28 @@
 import webapp2
 import caesar
 
+header = """
+    <header>
+        <h1>Enter some text into the ROT13 editor</h1>
+    </header>
+"""
+
 class MainHandler(webapp2.RequestHandler):
     def get(self):
-        message = "Hello"
-        textArea = "<textarea>" + caesar.encrypt(message, 12) + "</textarea>"
+
+        textArea = "<textarea name='message'></textarea>"
+        rotation_input = "<input type='number' name='rotation'/>"
         submit = "<input type='submit'/>"
-        form = "<form>" + textArea + "<br>" + submit + "</form>"
+        form = "<form method='post'>" + header + rotation_input + textArea + "<br>" + submit + "</form>"
         self.response.write(form)
+
+    def post(self):
+
+        message = self.request.get("message")
+        rotation = int(self.request.get("rotation"))
+        encrypted_message = caesar.encrypt(message, rotation)
+        self.response.write("Secret Message:" + encrypted_message)
+
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler)
